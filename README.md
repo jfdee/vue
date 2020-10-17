@@ -1,4 +1,4 @@
-# carsharing
+# my_vue_project
 
 ## Project setup
 ```
