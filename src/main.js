@@ -4,10 +4,12 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import lodash from './plugins/lodash';
+import axios from './plugins/axios'
 
 Vue.config.productionTip = false
 
 Vue.use(lodash)
+Vue.use(axios)
 
 new Vue({
   router,
