@@ -28,17 +28,17 @@
     <div class = "app">
       <h1> Тестовый проект </h1>
       <hr>
-      <buttons/>
+      <Buttons/>
     </div>
   </v-card>
 </template>
 
 <script>
-import buttons from "@/components/buttons"
+import Buttons from "@/components/Buttons"
 export default {
   name: 'test',
   components: {
-    buttons
+    Buttons
   }
 }
 </script>
