@@ -1,7 +1,8 @@
-import Vue from 'vue';
-import Lodash from 'lodash';
+import _ from 'lodash';
 
-Vue.use(Lodash);
 
-export default new Lodash({
+export default ({
+    install(Vue, options){
+        Vue.prototype.$_ = _
+    }
 });
