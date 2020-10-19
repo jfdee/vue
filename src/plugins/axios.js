@@ -1,6 +1,8 @@
-import Vue from 'vue';
-import Axios from 'axios';
+import ajax from 'axios';
 
 
-export default new Axios({
+export default ({
+    install(Vue){
+        Vue.prototype.$ajax = ajax
+    }
 });

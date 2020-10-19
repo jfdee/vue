@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 
 export default ({
-    install(Vue, options){
+    install(Vue){
         Vue.prototype.$_ = _
     }
 });
