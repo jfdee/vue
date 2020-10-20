@@ -2,20 +2,17 @@
 
 <div class="app">
   <div class="header">
-        All pokemons : {{GET_POKEMONS.count}}
-        <br>
-        Showed pokemons: {{GET_POKEMONS.results.length}}
   </div>
       
   <v-expansion-panels>
     <v-expansion-panel
-        v-for="(pokemon, index) in GET_POKEMONS.results" 
-        :key="pokemon.name"
-      >
+        v-for="(pokemon, index) in pokemons.data.results"
+        :key="pokemon.name">
         <v-expansion-panel-header>
-            #{{index}}
-            {{pokemon.name}}
+        {{index}}.
+        {{pokemon.name}}
         </v-expansion-panel-header>
+          
         <v-expansion-panel-content>
           URL : {{pokemon.url}}
         </v-expansion-panel-content>
@@ -25,22 +22,22 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import $ajax from 'axios'
 export default {
-  name: "app",
+  computed: {
+      pokemons() {
+        return this.$store.getters.GET_POKEMONS
+      }
+  },
 
-  computed: mapGetters ([
-    "GET_POKEMONS"
-    ]),
-
-  methods: mapActions ([
-    "GET_POKEMONS_FROM_API"
-  ]),
 
   async mounted(){
-    this.GET_POKEMONS_FROM_API()
-  }
-  
+      return $ajax.get("https://pokeapi.co/api/v2/pokemon?limit=20")
+      .then ((pokemons) => {
+          this.$store.commit('UpdatePokemons', pokemons);
+      })
+  },
+
 }
 </script>
 
