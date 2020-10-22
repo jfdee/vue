@@ -1,15 +1,15 @@
 <template>
 <div class="app">
   <div class="header">
-  <v-btn @click="Update_Data()">
+  <v-btn @click="updateData">
         Обновить
       </v-btn>
   </div>
 
-  <div class="ifContentReady" v-if="ReadyFlag">
+  <div class="if-content-ready" v-if="readyFlag">
     
     <v-expansion-panels >
-      <v-expansion-panel  v-for="(item,i) in Pagination_Valutes"
+      <v-expansion-panel  v-for="(item,i) in paginationValutes"
       :key="i"
       >
         <v-expansion-panel-header>
@@ -22,26 +22,26 @@
       </v-expansion-panel>
     </v-expansion-panels> 
 
-    <div class="pagination_table">
-      <v-btn class = "PrevAndNextButtons" outlined @click="Change_Page('dec')">
-        <v-icon > mdi-chevron-left </v-icon>
+    <div class="pagination-table">
+      <v-btn class = "prev-and-next-buttons" outlined @click="changePage('dec')">
+        <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
       <div class="pages"
-      v-for="page in Pages"
+      v-for="page in pages"
       :key="page"
-      :class="{'current_page' : page === PageNumber}" 
+      :class="{'current-page' : page === pageNumber}" 
       @click="Page_Click(page)"
       >
       {{page}}
       </div>
-      <v-btn class = "PrevAndNextButtons" outlined @click="Change_Page('inc')"> 
+      <v-btn class = "prev-and-next-buttons" outlined @click="changePage('inc')"> 
         <v-icon > mdi-chevron-right </v-icon>
       </v-btn>
     </div>
   </div>
 
 
-  <div class="ifContentNotReady" v-if="!ReadyFlag">
+  <div class="if-content-not-ready" v-if="!readyFlag">
 
     <v-progress-circular
       :size="70"
@@ -63,20 +63,19 @@ import moment from '../plugins/moment'
 export default {
   data() {
     return {
-      ValPerPage : 5,
-      PageNumber: 1,
-      LoadingFlag: false,
-      ReadyFlag: false,
-      MaxPage: 7,
+      valPerPage : 5,
+      pageNumber: 1,
+      readyFlag: false,
+      maxPage: 7,
     }
   },
 
   computed: {
-    Get_ValCurs_From_Store() {
+    getValCursFromStore() {
             return this.$store.getters.GET_VALCURS.ValCurs.Valute;
       },
 
-    Get_Full_Path_Of_Api(){
+    getFullPathOfApi(){
         const DATE_FORMAT = 'DD/MM/YYYY'
         const CURRENT_DATE = String(moment.format(DATE_FORMAT))
         const PROXY = 'https://cors-anywhere.herokuapp.com/'
@@ -85,50 +84,45 @@ export default {
         return FULL_API_PATH;
       },
 
-    Pages(){
-      return Math.ceil(this.Get_ValCurs_From_Store.length / this.ValPerPage);
+    pages(){
+      return Math.ceil(this.getValCursFromStore.length / this.valPerPage);
     },
     
-    Pagination_Valutes(){
-      //let from = (this.PageNumber - 1) * this.ValPerPage;
-      //let to = from + this.ValPerPage;
-      
-      //return this.Get_ValCurs_From_Store.slice(from, to);
-      let chunksArray = this.$_.chunk(this.Get_ValCurs_From_Store, this.ValPerPage);
-      return chunksArray[this.PageNumber - 1];
+    paginationValutes(){
+      let chunksArray = this.$_.chunk(this.getValCursFromStore, this.valPerPage);
+      return chunksArray[this.pageNumber - 1];
     }
      
     },
 
     methods: {
-    Page_Click(page){
-      return this.PageNumber = page;
+    pageClick(page){
+      return this.pageNumber = page;
     },
 
-    Update_Data(){
-      this.ReadyFlag = false;
-      this.PageNumber = 1;
-      return this.$ajax.get(this.Get_Full_Path_Of_Api)
-          .then ((ValCursXML) => {
+    updateData(){
+      this.readyFlag = false;
+      this.pageNumber = 1;
+      return this.$ajax.get(this.getFullPathOfApi)
+          .then ((valCursXML) => {
               var convert = require('xml-js');
-              var result = convert.xml2json(ValCursXML.data, {compact: true, spaces: 4});
-              var ValCursJSON = JSON.parse(result);
-              this.$store.commit('Update_Val_Curs', (ValCursJSON));
+              var result = convert.xml2json(valCursXML.data, {compact: true, spaces: 4});
+              var valCursJSON = JSON.parse(result);
+              this.$store.commit('Update_Val_Curs', (valCursJSON));
               
-              this.ReadyFlag = true;
+              this.readyFlag = true;
         })
-
     },
 
-    Change_Page(direction){
+    changePage(direction){
       if(direction == 'dec'){
-        if(this.PageNumber != 1){
-          this.PageNumber--;
+        if(this.pageNumber != 1){
+          this.pageNumber--;
         }
       }
       if(direction == 'inc'){
-        if(this.PageNumber != this.MaxPage){
-          this.PageNumber++;
+        if(this.pageNumber != this.maxPage){
+          this.pageNumber++;
         }
       }
     }
@@ -137,7 +131,7 @@ export default {
     
 
 async mounted(){
-    this.Update_Data();
+    await this.updateData();
 },
 
 }
@@ -151,7 +145,7 @@ async mounted(){
     justify-content: center;
 }
 
-.pagination_table{
+.pagination-table{
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -169,15 +163,15 @@ async mounted(){
   cursor: pointer;
 }
 
-.current_page{
+.current-page{
   background-color: #beedde;
 }
 
-.ifContentNotReady{
+.if-content-not-ready{
   text-align: center;
 }
 
-.PrevAndNextButtons{
+.prev-and-next-buttons{
   padding: 8px;
   margin-right: 8px;
   border: solid 1px #e7e7e7;
