@@ -1,15 +1,15 @@
 <template>
   <div class="app">
-    <Pokemon />
+    <Bank />
   </div>
 </template>
 
 
 <script>
-import Pokemon from '@/components/Pokemon'
+import Bank from '@/components/Bank'
 export default {
   components: {
-    Pokemon
+    Bank
   }
 }
 </script>
