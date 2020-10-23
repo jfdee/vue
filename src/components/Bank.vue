@@ -3,7 +3,7 @@
   
 <div class="if-content-ready" v-if="readyFlag">
   <div class="header">
-  <v-btn @click="updateData">
+  <v-btn @click="onUpdateButtonClick">
         Обновить
       </v-btn>
   </div>
@@ -13,7 +13,7 @@
       <v-expansion-panel  v-for="(item,i) in paginationValutes"
       :key="i"
       >
-        <v-expansion-panel-header @click="setNewValuteCurs(item.Value._text)">
+        <v-expansion-panel-header @click="onPanelHeaderClick(item.Value._text)">
           {{item.Name._text}}
           
           
@@ -28,18 +28,18 @@
     </v-expansion-panels> 
 
     <div class="pagination-table">
-      <v-btn class = "prev-and-next-buttons" outlined @click="changePage('dec')">
+      <v-btn class = "prev-and-next-buttons" outlined @click="onChangePageButtonClick('dec')">
         <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
       <div class="pages"
       v-for="page in pages"
       :key="page"
       :class="{'current-page' : page === pageNumber}" 
-      @click="pageClick(page)"
+      @click="onPageClick(page)"
       >
       {{page}}
       </div>
-      <v-btn class = "prev-and-next-buttons" outlined @click="changePage('inc')"> 
+      <v-btn class = "prev-and-next-buttons" outlined @click="onChangePageButtonClick('inc')"> 
         <v-icon > mdi-chevron-right </v-icon>
       </v-btn>
     </div>
@@ -104,11 +104,11 @@ export default {
     },
 
     methods: {
-    pageClick(page){
+    onPageClick(page){
       return this.pageNumber = page;
     },
 
-    updateData(){
+    onUpdateButtonClick(){
       this.readyFlag = false;
       this.pageNumber = 1;
       return this.$ajax.get(this.getFullPathOfApi)
@@ -122,7 +122,7 @@ export default {
         })
     },
 
-    changePage(direction){
+    onChangePageButtonClick(direction){
       if(direction == 'dec'){
         if(this.pageNumber != 1){
           this.pageNumber--;
@@ -136,7 +136,7 @@ export default {
     },
 
 
-    setNewValuteCurs(count){
+    onPanelHeaderClick(count){
       count = count.replace(',','.');
       this.currentValute = parseFloat(count);
       this.valuteOut = this.currentValute;
@@ -145,7 +145,7 @@ export default {
     
 
 async mounted(){
-    await this.updateData();
+    await this.onUpdateButtonClick();
 },
 
 
