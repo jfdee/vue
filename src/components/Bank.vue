@@ -1,23 +1,28 @@
 <template>
 <div class="app">
+  
+<div class="if-content-ready" v-if="readyFlag">
   <div class="header">
   <v-btn @click="updateData">
         Обновить
       </v-btn>
   </div>
 
-  <div class="if-content-ready" v-if="readyFlag">
     
-    <v-expansion-panels >
+    <v-expansion-panels>
       <v-expansion-panel  v-for="(item,i) in paginationValutes"
       :key="i"
       >
-        <v-expansion-panel-header>
-          {{item.CharCode._text}} : {{item.Name._text}}
+        <v-expansion-panel-header @click="setNewValuteCurs(item.Value._text)">
+          {{item.Name._text}}
+          
+          
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          Российский рубль :  {{item.Value._text}}
-
+          [ {{item.CharCode._text}} ]
+          <input class = "valute" v-model.number="valuteFrom"> <br>
+          [ RUB ] 
+          <input class = "valute" v-model.number="valuteOut">
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels> 
@@ -30,7 +35,7 @@
       v-for="page in pages"
       :key="page"
       :class="{'current-page' : page === pageNumber}" 
-      @click="Page_Click(page)"
+      @click="pageClick(page)"
       >
       {{page}}
       </div>
@@ -67,6 +72,9 @@ export default {
       pageNumber: 1,
       readyFlag: false,
       maxPage: 7,
+      valuteFrom: 1,
+      valuteOut: 1,
+      currentValute: 1,
     }
   },
 
@@ -125,8 +133,14 @@ export default {
           this.pageNumber++;
         }
       }
-    }
+    },
 
+
+    setNewValuteCurs(count){
+      count = count.replace(',','.');
+      this.currentValute = parseFloat(count);
+      this.valuteOut = this.currentValute;
+    }
   },
     
 
@@ -134,6 +148,20 @@ async mounted(){
     await this.updateData();
 },
 
+
+
+  watch:{
+    valuteFrom: function(val){
+      this.valuteFrom = val;
+      this.valuteOut = val * this.currentValute;
+    },
+    valuteOut: function(val){
+      this.valuteOut = val;
+      this.valuteFrom = val / this.currentValute;
+    }
+    
+
+  }
 }
 </script>
 
@@ -177,4 +205,13 @@ async mounted(){
   border: solid 1px #e7e7e7;
 }
 
+.valute{
+  width: 300px;
+  padding-left: 10px;
+	font-size: 13px;
+	padding: 6px 0 4px 10px;
+	border: 1px solid #080808;
+	background: #f2d8bd;
+	border-radius: 8px;
+}
 </style>
