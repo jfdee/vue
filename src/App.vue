@@ -1,15 +1,15 @@
 <template>
   <div class="app">
-    <Bank />
+    <FileInfo />
   </div>
 </template>
 
 
 <script>
-import Bank from '@/components/Bank'
+import FileInfo from '@/components/FileInfo'
 export default {
   components: {
-    Bank
+    FileInfo
   }
 }
 </script>
