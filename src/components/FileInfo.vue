@@ -1,6 +1,8 @@
 <template>
 <div class="content">
-        <input type="file" id="file" ref="file" v-on:change="handleFileUpload"/>
+        <input type="file" ref="file" v-on:change="handleFileUpload"/>
+        <v-btn @click="deleteFile">Delete</v-btn>
+
 
         <div class="info"
         v-if="typeof fileFullName === 'string'"
@@ -12,8 +14,8 @@
             <p>SHA1 :<br> {{printHashSHA1()}}</p>
         </div>
 
-        <div class="loader">
-        <Loader v-if="isLoading"/>
+        <div class="loader" v-if="isLoadingInfoAboutFile">
+        <Loader />
         </div>
 
         
@@ -33,7 +35,7 @@ import Loader from './Loader'
 export default {
     data () {
         return {
-            isLoading: true,
+            isLoadingInfoAboutFile: false,
             fileFullName: null,
             fileName: '',
             fileExtencion: '', 
@@ -43,25 +45,24 @@ export default {
 
     methods: {
         handleFileUpload(){
-            this.isLoading = false;
+            this.isLoadingInfoAboutFile = true;
+            setTimeout(this.getFile, 2000);
 
-            this.fileFullName = this.$refs.file.files[0].name;
+            this.isLoadingInfoAboutFile = false;
             
+        },
+
+        deleteFile(){
+            this.fileFullName = null;
+        },
+
+        getFile(){
+            this.fileFullName = this.$refs.file.files[0].name;
             let temp = this.fileFullName;
             this.fileExtencion = temp.replace(/.+(?=\.)/,'');
             this.fileName = this.fileFullName.replace(this.fileExtencion,'') ;
-            
-            this.sleep(2000);
-            this.isLoading = true;
-            
         },
-        sleep(millis) {
-            var t = (new Date()).getTime();
-            var i = 0;
-            while (((new Date()).getTime() - t) < millis) {
-                i = i + 1;
-            }
-        },
+
         
         printHashSHA256(){
             var sha256 = require('tiny-sha256');
@@ -109,5 +110,9 @@ export default {
 
 .loader{
     margin-top: 30%;
+}
+.small-loader{
+    width: 30px;
+    height: 30px;
 }
 </style>
