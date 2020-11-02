@@ -26,12 +26,12 @@ export default {
     data () {
         return {
             isLoadingInfoAboutFile: false,
-            file_object: null,
+            fileObject: null,
             fileFullName: null,
             fileName: '',
             fileExtencion: '',
-            hashSHA256: '',
-            hashSHA1: '',
+            hashSHA256: null,
+            hashSHA1: null,
         }
     },
 
@@ -40,14 +40,9 @@ export default {
             this.isLoadingInfoAboutFile = true;
             setTimeout(this.getFile, 2000);
 
-            let fileReader = new FileReader();
-            fileReader.readAsArrayBuffer(this.$refs.file.files[0]);
-            fileReader.onload = function() {
-                console.log(fileReader.result);
-            }
-            this.setHashSHA256(fileReader.result);
-            this.setHashSHA1(fileReader.result);
-            
+            this.fileObject = this.$refs.file.files[0];
+            this.setHashSHA256();
+            this.setHashSHA1();
             
             this.isLoadingInfoAboutFile = false;
         },
@@ -57,31 +52,26 @@ export default {
         },
 
         getFile(){
-            this.file_object = this.$refs.file.files[0];
-            this.fileFullName = this.file_object.name;
-
+            this.fileFullName = this.fileObject.name;
+            
             let temp = this.fileFullName;
             this.fileExtencion = temp.replace(/.+(?=\.)/,'');
             this.fileName = this.fileFullName.replace(this.fileExtencion,'');
         },
 
-        
-        setHashSHA256(file){
+        setHashSHA256(){
             let sha256 = require('tiny-sha256');
-            this.hashSHA256 = sha256(file);
+            this.hashSHA256 = sha256(this.fileObject);
         },
 
-        setHashSHA1(file)
-        {
+        setHashSHA1(){
             let sha1 = require('js-sha1');
-            this.hashSHA1 = sha1(file);
+            this.hashSHA1 = sha1(this.fileObject);
         }
-
     },
 
     computed:{
         isStringName(){
-            //return typeof this.fileFullName === 'string';
             return this.$_.isString(this.fileFullName)
         }
     },
