@@ -3,31 +3,21 @@
         <input type="file" ref="file" v-on:change="handleFileUpload"/>
         <v-btn @click="deleteFile">Delete</v-btn>
 
-
         <div class="info"
-        v-if="typeof fileFullName === 'string'"
+        v-if="isStringName"
         >
             <p>Full file name : [ {{fileFullName}} ]</p>
             <p>File name : [ {{fileName}} ]</p>
             <p>File type : [ {{fileExtencion}} ]</p>
-            <p>SHA256 :<br> {{printHashSHA256()}}</p>
-            <p>SHA1 :<br> {{printHashSHA1()}}</p>
+            <p>SHA256 :<br> {{ hashSHA256 }} </p>
+            <p>SHA1 : <br> {{ hashSHA1 }}</p>
         </div>
 
         <div class="loader" v-if="isLoadingInfoAboutFile">
         <Loader />
         </div>
-
-        
-
-
-
-
-        
 </div>
 </template>
-
-
 
 
 <script>
@@ -36,10 +26,12 @@ export default {
     data () {
         return {
             isLoadingInfoAboutFile: false,
+            file_object: null,
             fileFullName: null,
             fileName: '',
-            fileExtencion: '', 
-
+            fileExtencion: '',
+            hashSHA256: '',
+            hashSHA1: '',
         }
     },
 
@@ -48,8 +40,16 @@ export default {
             this.isLoadingInfoAboutFile = true;
             setTimeout(this.getFile, 2000);
 
-            this.isLoadingInfoAboutFile = false;
+            let fileReader = new FileReader();
+            fileReader.readAsArrayBuffer(this.$refs.file.files[0]);
+            fileReader.onload = function() {
+                console.log(fileReader.result);
+            }
+            this.setHashSHA256(fileReader.result);
+            this.setHashSHA1(fileReader.result);
             
+            
+            this.isLoadingInfoAboutFile = false;
         },
 
         deleteFile(){
@@ -57,27 +57,35 @@ export default {
         },
 
         getFile(){
-            this.fileFullName = this.$refs.file.files[0].name;
+            this.file_object = this.$refs.file.files[0];
+            this.fileFullName = this.file_object.name;
+
             let temp = this.fileFullName;
             this.fileExtencion = temp.replace(/.+(?=\.)/,'');
-            this.fileName = this.fileFullName.replace(this.fileExtencion,'') ;
+            this.fileName = this.fileFullName.replace(this.fileExtencion,'');
         },
 
         
-        printHashSHA256(){
-            var sha256 = require('tiny-sha256');
-            var hash = sha256(this.fileFullName);
-            return hash;
+        setHashSHA256(file){
+            let sha256 = require('tiny-sha256');
+            this.hashSHA256 = sha256(file);
         },
 
-        printHashSHA1()
+        setHashSHA1(file)
         {
-            var sha1 = require('js-sha1');
-            var hash = sha1(this.fileFullName);
-            return hash;
+            let sha1 = require('js-sha1');
+            this.hashSHA1 = sha1(file);
         }
 
     },
+
+    computed:{
+        isStringName(){
+            //return typeof this.fileFullName === 'string';
+            return this.$_.isString(this.fileFullName)
+        }
+    },
+
     components:{
         Loader,
     }
