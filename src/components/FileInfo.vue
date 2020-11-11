@@ -36,13 +36,15 @@ export default {
     },
 
     methods: {
+        
         handleFileUpload(){
             this.isLoadingInfoAboutFile = true;
             setTimeout(this.getFile, 2000);
 
             this.fileObject = this.$refs.file.files[0];
-            this.setHashSHA256();
-            this.setHashSHA1();
+            this.getHash();
+            //this.setHashSHA256();
+            //this.setHashSHA1();
             
             this.isLoadingInfoAboutFile = false;
         },
@@ -59,6 +61,20 @@ export default {
             this.fileName = this.fileFullName.replace(this.fileExtencion,'');
         },
 
+        async getHash(){
+            try{
+                const response = await this.$ajax.post({
+                                url: '/api/main/products', 
+                                data: this.fileObject,})
+                console.log(response);
+            }
+            catch(err){
+                 console.log(err);
+            }
+            
+            
+        }
+/*
         setHashSHA256(){
             let sha256 = require('tiny-sha256');
             this.hashSHA256 = sha256(this.fileObject);
@@ -68,6 +84,7 @@ export default {
             let sha1 = require('js-sha1');
             this.hashSHA1 = sha1(this.fileObject);
         }
+*/
     },
 
     computed:{
