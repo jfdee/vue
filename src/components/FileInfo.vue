@@ -43,8 +43,6 @@ export default {
 
             this.fileObject = this.$refs.file.files[0];
             this.getHash();
-            //this.setHashSHA256();
-            //this.setHashSHA1();
             
             this.isLoadingInfoAboutFile = false;
         },
@@ -77,17 +75,6 @@ export default {
             
             
         }
-/*
-        setHashSHA256(){
-            let sha256 = require('tiny-sha256');
-            this.hashSHA256 = sha256(this.fileObject);
-        },
-
-        setHashSHA1(){
-            let sha1 = require('js-sha1');
-            this.hashSHA1 = sha1(this.fileObject);
-        }
-*/
     },
 
     computed:{
