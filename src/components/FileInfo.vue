@@ -2,7 +2,7 @@
 <div class="content">
         <input type="file" ref="file" v-on:change="handleFileUpload"/>
         <v-btn @click="deleteFile">Delete</v-btn>
-
+        
         <div class="info"
         v-if="isStringName"
         >
@@ -63,13 +63,16 @@ export default {
 
         async getHash(){
             try{
-                const response = await this.$ajax.post({
-                                url: '/api/main/products', 
-                                data: this.fileObject,})
-                console.log(response);
-            }
-            catch(err){
-                 console.log(err);
+                const url = '/api/main/products';
+                const data = this.fileObject;
+                const headers = {
+                    Accept: 'application/json',
+                    'Content-type': 'multipart/form-data', }
+                const response = await this.$ajax.post(url, data, headers,);
+                this.hashSHA256 = response.data.sha256;
+                this.hashSHA1 = response.data.sha1;
+            } catch(err) {
+                console.log(err);
             }
             
             
