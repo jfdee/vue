@@ -2,7 +2,7 @@
 <div class="content">
         <input type="file" ref="file" v-on:change="handleFileUpload"/>
         <v-btn @click="deleteFile">Delete</v-btn>
-
+        
         <div class="info"
         v-if="isStringName"
         >
@@ -36,13 +36,13 @@ export default {
     },
 
     methods: {
+        
         handleFileUpload(){
             this.isLoadingInfoAboutFile = true;
             setTimeout(this.getFile, 2000);
 
             this.fileObject = this.$refs.file.files[0];
-            this.setHashSHA256();
-            this.setHashSHA1();
+            this.getHash();
             
             this.isLoadingInfoAboutFile = false;
         },
@@ -59,14 +59,21 @@ export default {
             this.fileName = this.fileFullName.replace(this.fileExtencion,'');
         },
 
-        setHashSHA256(){
-            let sha256 = require('tiny-sha256');
-            this.hashSHA256 = sha256(this.fileObject);
-        },
-
-        setHashSHA1(){
-            let sha1 = require('js-sha1');
-            this.hashSHA1 = sha1(this.fileObject);
+        async getHash(){
+            try{
+                const url = '/api/main/products';
+                const data = this.fileObject;
+                const headers = {
+                    Accept: 'application/json',
+                    'Content-type': 'multipart/form-data', }
+                const response = await this.$ajax.post(url, data, headers,);
+                this.hashSHA256 = response.data.sha256;
+                this.hashSHA1 = response.data.sha1;
+            } catch(err) {
+                console.log(err);
+            }
+            
+            
         }
     },
 
